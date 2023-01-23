@@ -1,26 +1,55 @@
-use yew::prelude::*;
+use yew::{ 
+    prelude::Component, 
+    Context, 
+    Renderer,
+    html, 
+};
 
-#[function_component]
-fn App() -> Html {
-    let counter = use_state(|| 0);
+enum Event {
+    Add,
+    Update(String),
+    Remove(usize),
+    RemoveAll
+}
 
-    let onclick = {
-        let counter = counter.clone();
+struct Model {
+    input: String,
+    todos: Vec<String>
+}
 
-        move |_| {
-            let value = *counter + 1;
-            counter.set(value);
+impl Component for Model {
+    type Message = Event;
+    type Properties = ();
+
+    fn create(_: &Context<Self>) -> Self {
+        Self {
+            input: String::new(),
+            todos: vec![]
         }
-    };
+    }
 
-    html! {
-        <div>
-            <button {onclick}>{ "+1" }</button>
-            <p>{ *counter }</p>
-        </div>
+    fn update(&mut self, _: &Context<Self>, ev: Self::Message) -> bool {
+        match ev {
+            Event::Add => { true },
+            Event::Update(v) => { true },
+            Event::Remove(i) => { true },
+            Event::RemoveAll => { true }
+        }
+    }
+
+    fn view(&self, ctx: &Context<Self>) -> yew::Html {
+        let link = ctx.link();
+
+        html! {
+            <div class="container">
+                <input placeholder="write something" />
+                <p>{ self.count }</p>
+                <button onclick={ link.callback(|_| Msg::Increment) }>{ "increment" }</button>
+            </div>
+        }
     }
 }
 
 fn main() {
-    yew::Renderer::<App>::new().render();
+    Renderer::<Model>::new().render();
 }
