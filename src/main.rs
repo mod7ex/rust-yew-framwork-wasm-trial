@@ -1,26 +1,46 @@
-use yew::prelude::*;
+use yew::{
+    prelude::{ Context, Component, Html, html },
+    Renderer
+};
 
-#[function_component]
-fn App() -> Html {
-    let counter = use_state(|| 0);
+enum Msg {
+    Increment,
+}
 
-    let onclick = {
-        let counter = counter.clone();
+struct Counter {
+    count: i64,
+}
 
-        move |_| {
-            let value = *counter + 1;
-            counter.set(value);
+impl Component for Counter {
+    type Message = Msg;
+    type Properties = ();
+
+    fn create(_ctx: &Context<Self>) -> Self {
+        Self {
+            count: 0,
         }
-    };
+    }
 
-    html! {
-        <div>
-            <button {onclick}>{ "+1" }</button>
-            <p>{ *counter }</p>
-        </div>
+    fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
+        match msg {
+            Msg::Increment => {
+                self.count += 1;
+                true // re-render component
+            }
+        }
+    }
+
+    fn view(&self, ctx: &Context<Self>) -> Html {
+        let link = ctx.link();
+        html! {
+            <div class="container">
+                <p>{ self.count }</p>
+                <button onclick={link.callback(|_| Msg::Increment)}>{ "Increment" }</button>
+            </div>
+        }
     }
 }
 
 fn main() {
-    yew::Renderer::<App>::new().render();
+    Renderer::<Counter>::new().render();
 }
